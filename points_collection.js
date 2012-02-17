@@ -14,7 +14,7 @@ Array.prototype.min = function(func) {
         min_value = func(this[i]);
       }
     }
-  } 
+  }
 
   return element;
 }
@@ -75,7 +75,7 @@ PointsMap.prototype.indexOf = function(point) {
   var delta_x = (this.max_x - this.min_x) / this.M;
   var delta_y = (this.max_y - this.min_y) / this.N;
   var m = Math.floor((point.x - this.min_x) / delta_x);
-  var n = Math.floor((point.y - this.min_y) / delta_y); 
+  var n = Math.floor((point.y - this.min_y) / delta_y);
 
   m = Math.max(0, Math.min(m, this.M - 1));
   n = Math.max(0, Math.min(n, this.N - 1));
@@ -106,7 +106,7 @@ PointsCollection.prototype.find_closest_to = function(point) {
 PointsCollection.prototype.prepare_map = function(N) {
   var min_x = this.min(function(el){ return el.x }).x;
   var max_x = this.max(function(el){ return el.x }).x;
-  
+
   var min_y = this.min(function(el){ return el.y }).y;
   var max_y = this.max(function(el){ return el.y }).y;
 
@@ -146,6 +146,11 @@ PointsCollection.prototype.smart_find_closest_to = function(point) {
     radius++;
   }
 
+  var delta = point.distance_to(closest);
+  //console.log(this._find_chunks_in_delta(point, delta));
+  closest = this._find_in_chunks_closest_to(this._find_chunks_in_delta(point, delta), point);
+
+
   return closest;
 }
 
@@ -177,7 +182,7 @@ PointsCollection.prototype._find_chunks_in_delta = function(point, delta) {
 
     }
   }
-  
+
   return chunks_indexes;
 }
 
