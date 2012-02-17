@@ -140,24 +140,45 @@ PointsCollection.prototype.smart_find_closest_to = function(point) {
       }
     }
 
-    var collection = new PointsCollection();
-    // из каждого куска карты выбираем ближнюю точку
-    for(var i = 0; i < chunks_indexes.length; i++) {
-      var chunk = this.points_map.get_chunk(chunks_indexes[i]);
-
-      if(chunk != undefined) {
-        var closest = chunk.find_closest_to(point);
-        if(closest != undefined) collection.push(closest);
-      }
-    }
-
-    closest = collection.find_closest_to(point);
+    closest = this._find_in_chunks_closest_to(chunks_indexes, point);
 
     // расширяем круг поиска
     radius++;
   }
 
   return closest;
+}
+
+PointsCollection.prototype._find_in_chunks_closest_to = function(chunks_indexes, point) {
+  var collection = new PointsCollection();
+  // из каждого куска карты выбираем ближнюю точку
+  for(var i = 0; i < chunks_indexes.length; i++) {
+    var chunk = this.points_map.get_chunk(chunks_indexes[i]);
+
+    if(chunk != undefined) { // если за пределами карты
+      var closest = chunk.find_closest_to(point);
+      if(closest != undefined) collection.push(closest);
+    }
+  }
+
+  return collection.find_closest_to(point);
+}
+
+// delta - float расстояние
+PointsCollection.prototype._find_chunks_in_delta = function(point, delta) {
+  var top_left_chunk_index = this.points_map.indexOf({ x: point.x - delta, y: point.y - delta });
+  var bottom_right_chunk_index = this.points_map.indexOf({ x: point.x + delta, y: point.y + delta });
+
+  var chunks_indexes = [];
+
+  for(var m=top_left_chunk_index.m; m <= bottom_right_chunk_index.m; m++) {
+    for(var n=top_left_chunk_index.n; n <= bottom_right_chunk_index.n; n++) {
+      chunks_indexes.push({ m: m, n: n });
+
+    }
+  }
+  
+  return chunks_indexes;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -174,12 +195,6 @@ for(var i = 0; i < 100; i++) {
 profile_function(function() {
   collection.prepare_map(100);
 }, "Prepare map");
-
-//profile_function(function() {
-  //for(var i = 0; i < collection.length / 2; i++) {
-    //collection.smart_find_closest_to(new Point(Math.random(), Math.random()));
-  //}
-//}, "Smart search");
 
 
 for(var i=0; i < 100; i++) {
