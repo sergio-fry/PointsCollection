@@ -140,6 +140,7 @@ PointsCollection.prototype.smart_find_closest_to = function(point) {
       }
     }
 
+    // TODO: не искать в одних и тех же чанках повторно
     closest = this._find_in_chunks_closest_to(chunks_indexes, point);
 
     // расширяем круг поиска
@@ -193,7 +194,7 @@ var collection = new PointsCollection();
 
 
 //random data
-for(var i = 0; i < 100; i++) {
+for(var i = 0; i < 90000; i++) {
   collection.push(new Point(Math.random(), Math.random()));
 }
 
@@ -201,14 +202,21 @@ profile_function(function() {
   collection.prepare_map(100);
 }, "Prepare map");
 
-
-for(var i=0; i < 100; i++) {
-  var point = new Point(Math.random(), Math.random());
-  var closest1 = collection.find_closest_to(point);
-  var closest2 = collection.smart_find_closest_to(point);
-
-  if(closest1.x != closest2.x) {
-    console.log(closest1, point.distance_to(closest1));
-    console.log(closest2, point.distance_to(closest2));
-  }
+var points = [];
+for(var i = 0; i < 60; i++) {
+  points.push(new Point(Math.random(), Math.random()));
 }
+
+profile_function(function() {
+  for(var i = 0; i < points.length; i++) {
+    collection.find_closest_to(points[i]);
+  }
+}, "Simple search");
+
+profile_function(function() {
+  for(var i = 0; i < points.length; i++) {
+    collection.smart_find_closest_to(points[i]);
+  }
+}, "Smart search");
+
+
