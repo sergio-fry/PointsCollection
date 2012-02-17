@@ -34,8 +34,6 @@ var profile_function = function(func, description) {
   console.log("<<<< " + description + ": " + (after - before) / 1000 + " ms");
 }
 
-
-
 ///////////////////////////////////////////////////////////////////////////////
 // Point
 var points_sequence = 0;
@@ -186,37 +184,3 @@ PointsCollection.prototype._find_chunks_in_delta = function(point, delta) {
 
   return chunks_indexes;
 }
-
-///////////////////////////////////////////////////////////////////////////////
-// Program
-
-var collection = new PointsCollection();
-
-
-//random data
-for(var i = 0; i < 90000; i++) {
-  collection.push(new Point(Math.random(), Math.random()));
-}
-
-profile_function(function() {
-  collection.prepare_map(100);
-}, "Prepare map");
-
-var points = [];
-for(var i = 0; i < 60; i++) {
-  points.push(new Point(Math.random(), Math.random()));
-}
-
-profile_function(function() {
-  for(var i = 0; i < points.length; i++) {
-    collection.find_closest_to(points[i]);
-  }
-}, "Simple search");
-
-profile_function(function() {
-  for(var i = 0; i < points.length; i++) {
-    collection.smart_find_closest_to(points[i]);
-  }
-}, "Smart search");
-
-

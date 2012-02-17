@@ -1,0 +1,22 @@
+== PointsCollection
+
+Points collection class with implemeted quick search for a closest point.
+
+== Usage
+
+  var collection = new PointsCollection();
+
+  //random data
+  for(var i = 0; i < 90000; i++) {
+    collection.push(new Point(Math.random(), Math.random()));
+  }
+
+  // build index with 100x100 zones
+  collection.prepare_map(100);
+
+  // any object having x, y
+  var point = { x: Math.random(), y: Math.random() };
+
+  var closest = collection.smart_find_closest_to(point);
+
+  console.log(point, closest);
